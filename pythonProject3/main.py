@@ -94,3 +94,51 @@ elif algo == '2':
     len(procs), faultsCounter, (faultsCounter / len(procs)) * 100))
 
 
+elif algo == '3':
+    # apply optimal
+    frame = []
+    faultsCounter = 0
+    pageFault = 'No Fault'
+    alreadyExists = False
+    framesFull = False
+
+    procFrequency = [None for i in range(size)]
+
+    for i in range(0, len(procs), 1):
+
+        if procs[i] in frame:
+            alreadyExists = True
+        else:
+            alreadyExists = False
+
+        if alreadyExists:
+            pageFault = 'No Fault'
+        else:
+            if len(frame) < size:
+                framesFull = False
+            else:
+                framesFull = True
+
+            if not framesFull:
+                frame.append(procs[i])
+            else:
+                for x in range(0, len(frame), 1):
+                    if frame[x] not in procs[i + 1:]:
+                        frame[x] = procs[i]
+                        break
+                    else:
+                        procFrequency[x] = procs[i + 1:].index(frame[x])
+                else:
+                    frame[procFrequency.index(max(procFrequency))] = procs[i]
+            faultsCounter = faultsCounter + 1
+            pageFault = 'Fault'
+
+        print("   %s\t\t" % procs[i], end='')
+        for x in frame:
+            print(x, end=' ')
+        for x in range(size - len(frame)):
+            print(' ', end=' ')
+        print(" %s" % pageFault)
+    print("\nTotal requests: %d\nTotal Page Faults: %d\nFault Rate: %0.2f%%" % (
+    len(procs), faultsCounter, (faultsCounter / len(procs)) * 100))
+
